@@ -14,9 +14,9 @@ namespace EnvironmentInformation
         {
             parentNode = new Node((char)(0));
         }
-        public void addWord(string x)
+        public void addWord(string x,long current)
         {
-            parentNode.addWord(x, 0);
+            parentNode.addWord(x, 0,current);
         }
         public void analyzeString(string x)
         {
@@ -28,10 +28,10 @@ namespace EnvironmentInformation
             Dictionary<string, long> result = new Dictionary<string, long>();
             foreach (var i in x)
             {
-                i.Key.RemoveAt(i.Key.Count - 1);
+                //i.Key.RemoveAt((i.Key.Count - 1));
                 i.Key.Reverse();
                 
-                string key = i.Key.ToString();
+                string key = string.Join("", i.Key.ToArray());
                 result[key] = i.Value;
             }
             return result;
@@ -60,11 +60,12 @@ namespace EnvironmentInformation
             arrayPointers = new Dictionary<char, Node>();
         }
 
-        public void addWord(string x,int pos)
+        public void addWord(string x,int pos,long current)
         {
             if (pos == x.Length)
             {
                 isWord = true;
+                value += current;
                 return;
             }
             char now = x[pos];
@@ -73,7 +74,7 @@ namespace EnvironmentInformation
             {
                 nxt = createChild(now);
             }
-            nxt.addWord(x, pos + 1);
+            nxt.addWord(x, pos + 1,current);
         }
 
         public void analyzeString(string x, int pos)
@@ -161,6 +162,10 @@ namespace EnvironmentInformation
                     u.Key.Add(i.Value.Letter);
                     result.Add(u);
                 }
+            }
+            if (isWord)
+            {
+                result.Add(new KeyValuePair<List<char>, long>(new List<char>(), value));
             }
             return result;
         }

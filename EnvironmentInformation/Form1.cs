@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using java.util;
+using System.Timers;
+using System.Diagnostics;
 using java.io;
 using edu.stanford.nlp.pipeline;
 using Console = System.Console;
@@ -54,31 +56,7 @@ namespace EnvironmentInformation
     {
         Trie words = new Trie();
 
-        /*Dictionary<string , long> words =
-            new Dictionary<string , long>();*/
         private System.Object lockThis = new System.Object();
-
-        public void UpdateOnBase(string path)
-        {
-            System.IO.StreamReader file =
-            new System.IO.StreamReader(path);
-            string line;
-
-            while ((line = file.ReadLine()) != null)
-            {
-                line = line.ToLower();
-
-                string line2 = file.ReadLine();
-                long num = Int64.Parse(line2);
-                try
-                {
-                }
-                catch (KeyNotFoundException)
-                {
-                }
-            }
-            file.Close();
-        }
 
         public Form1()
         {
@@ -173,34 +151,45 @@ namespace EnvironmentInformation
             System.IO.StreamReader file =
                 new System.IO.StreamReader(Environment.CurrentDirectory + "\\words.txt");
             string line;
-
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            long xx = 0;
             while ((line = file.ReadLine()) != null)
             {
                 line = line.ToLower();
-
+                xx++;
                 string line2 = file.ReadLine();
                 long num = Int64.Parse(line2);
-                try
-                {
-                    //words[line] += num;
-                }
-                catch (KeyNotFoundException)
-                {
-                    //words[line] = num;
-                }
+                words.addWord(line, num);
             }
+            TimeSpan ts = stopWatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+            lbx.Items.Add("Read finished " + elapsedTime + " lines read: " + xx);
             file.Close();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             System.IO.StreamWriter file =
-                new System.IO.StreamWriter(Environment.CurrentDirectory + "\\words.txt");
-            /*foreach (var x in words)
+                new System.IO.StreamWriter(Environment.CurrentDirectory + "\\words_out.txt");
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+            long xx = 0;
+            var toSave = words.getStatistics();
+
+            foreach (var x in toSave)
             {
                 file.WriteLine(x.Key);
                 file.WriteLine(x.Value);
-            }*/
+                xx++;
+            }
+            TimeSpan ts = stopWatch.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+            lbx.Items.Add("Read finished " + elapsedTime + " lines wrote: " + xx*2);
             file.Close();
         }
     }
