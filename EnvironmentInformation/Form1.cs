@@ -18,38 +18,14 @@ using System.Collections.Generic;
 
 namespace EnvironmentInformation
 {
-
-
-    /*public class WeirdString
+    public class Utility
     {
-        int begin;
-        int cur_to_write;
-        char[] storage;
-
-
-
-
-        public WeirdString(string x,int len)
+        public static bool isLetter(char x)
         {
-            if (x.Length > len)
-                throw new ArgumentException("len parametr should be less then x length");
-            while (storage.Length + x.Length != len)
-            {
-                storage += " ";
-            }
-            this.storage += x;
+            return (x <= 'z' && x >= 'a') || (x >= 'A' && x <= 'Z');
         }
+    }
 
-
-
-        public static WeirdString operator +(WeirdString c1, char c)
-        {
-            c1.storage[c1.cur_to_write] = c;
-            c1.cur_to_write++;
-            c1.cur_to_write %= c1.storage.Length;
-
-        }
-    }*/
     
 
     public partial class Form1 : Form
