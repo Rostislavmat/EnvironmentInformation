@@ -64,16 +64,7 @@ namespace EnvironmentInformation
             lbx.Items.Clear();
         }
 
-        private void TextRead(string fileName)
-        {
-            smartReader reader = new smartReader(fileName);
-            string nxt;
-            while ((nxt = reader.nextChar()) != null)
-            {
-                words.analyzeString(nxt);
-            }
-            
-        }
+
 
         private void btnRead_Click(object sender, EventArgs e)
         {
@@ -82,10 +73,8 @@ namespace EnvironmentInformation
             if (dialog == DialogResult.OK)
             {
                 string fileName = openFileDialog1.FileName;
-                Thread thread = new Thread(() => TextRead(fileName));
-                thread.Start();
-                thread.Join();
-                lbx.Items.Add("finished " + fileName);
+                backgroundWorker1.RunWorkerAsync(fileName);
+                
 
                 /*lblFileName.Text = "File Name: " + fileName;
                 string directoryName = Environment.CurrentDirectory;
@@ -175,6 +164,24 @@ namespace EnvironmentInformation
             ts.Milliseconds / 10);
             lbx.Items.Add("Read finished " + elapsedTime + " lines wrote: " + xx*2);
             file.Close();
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string fileName = (string)e.Argument;
+            smartReader reader = new smartReader(fileName);
+            string nxt;
+            while ((nxt = reader.nextChar()) != null)
+            {
+                words.analyzeString(nxt);
+            }
+
+        }
+
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            lbx.Items.Add("finished ");
         }
     }
 
