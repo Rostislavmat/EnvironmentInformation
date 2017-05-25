@@ -11,22 +11,13 @@ using System.Windows.Forms;
 using java.util;
 using System.Timers;
 using System.Diagnostics;
+using System.Threading;
 using java.io;
 using edu.stanford.nlp.pipeline;
 using Console = System.Console;
-using System.Collections.Generic;
 
 namespace EnvironmentInformation
 {
-    public class Utility
-    {
-        public static bool isLetter(char x)
-        {
-            return (x <= 'z' && x >= 'a') || (x >= 'A' && x <= 'Z');
-        }
-    }
-
-    
 
     public partial class Form1 : Form
     {
@@ -73,6 +64,17 @@ namespace EnvironmentInformation
             lbx.Items.Clear();
         }
 
+        private void TextRead(string fileName)
+        {
+            smartReader reader = new smartReader(fileName);
+            string nxt;
+            while ((nxt = reader.nextChar()) != null)
+            {
+                words.analyzeString(nxt);
+            }
+            
+        }
+
         private void btnRead_Click(object sender, EventArgs e)
         {
             DialogResult dialog = openFileDialog1.ShowDialog();
@@ -80,9 +82,15 @@ namespace EnvironmentInformation
             if (dialog == DialogResult.OK)
             {
                 string fileName = openFileDialog1.FileName;
-                lblFileName.Text = "File Name: " + fileName;
+                Thread thread = new Thread(() => TextRead(fileName));
+                thread.Start();
+                thread.Join();
+                lbx.Items.Add("finished " + fileName);
+
+                /*lblFileName.Text = "File Name: " + fileName;
                 string directoryName = Environment.CurrentDirectory;
                 directoryName += "/arch/";
+
                 try
                 {
                     directoryName += Path.GetFileNameWithoutExtension(fileName);
@@ -98,7 +106,7 @@ namespace EnvironmentInformation
                 byte[] byteText = new byte[fs.Length];
                 fs.Read(byteText, 0, byteText.Length);
                 txtFile.Text = System.Text.Encoding.ASCII.GetString(byteText);
-                fs.Close();
+                fs.Close();*/
 
             }
 
@@ -149,7 +157,7 @@ namespace EnvironmentInformation
         private void button3_Click(object sender, EventArgs e)
         {
             System.IO.StreamWriter file =
-                new System.IO.StreamWriter(Environment.CurrentDirectory + "\\words_out.txt");
+                new System.IO.StreamWriter(Environment.CurrentDirectory + "\\words.txt");
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             long xx = 0;
@@ -169,4 +177,9 @@ namespace EnvironmentInformation
             file.Close();
         }
     }
+
+
+
+
+
 }

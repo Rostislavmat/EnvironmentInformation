@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,6 +48,7 @@ namespace EnvironmentInformation
         private List<Node> listPointers;
         private Dictionary<char,Node> arrayPointers;
         private int size;
+        private static Mutex mut;
         private bool isWord;
         public bool Word {  get { return isWord; } }
         public char Letter { get { return letter; } }
@@ -55,6 +57,7 @@ namespace EnvironmentInformation
         {
             this.letter = letter;
             value = 0;
+            mut = new Mutex();
             size = 0;
             listPointers = new List<Node>();
             arrayPointers = new Dictionary<char, Node>();
@@ -79,9 +82,11 @@ namespace EnvironmentInformation
 
         public void analyzeString(string x, int pos)
         {
-            if (isWord)
+            if (isWord && (pos == x.Length || !Utility.isLetter(x[pos])))
             {
+                mut.WaitOne();
                 value++;
+                mut.ReleaseMutex();
             }
             if (pos == x.Length)
             {
