@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -15,6 +15,7 @@ using System.Threading;
 using java.io;
 using edu.stanford.nlp.pipeline;
 using Console = System.Console;
+using Newtonsoft.Json;
 
 namespace EnvironmentInformation
 {
@@ -73,29 +74,31 @@ namespace EnvironmentInformation
             if (dialog == DialogResult.OK)
             {
                 string fileName = openFileDialog1.FileName;
-                backgroundWorker1.RunWorkerAsync(fileName);
-                
 
-                /*lblFileName.Text = "File Name: " + fileName;
-                string directoryName = Environment.CurrentDirectory;
-                directoryName += "/arch/";
 
                 try
                 {
-                    directoryName += Path.GetFileNameWithoutExtension(fileName);
-                    ZipFile.ExtractToDirectory(fileName, directoryName);
+                    if (Directory.Exists("E:\\data_to_parse"))
+                    {
+                        Directory.Delete("E:\\data_to_parse",true);
+                    }
+                    ZipFile.ExtractToDirectory(fileName, "E:\\data_to_parse");
+                    string parsePath = "E:\\data_to_parse";
+                    System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(parsePath);
+                    System.IO.FileInfo[] files = di.GetFiles("*.txt");
+                    foreach (var x in files)
+                    {
+                        Thread th = new Thread(thread_DoWork);
+                        th.Start(x.FullName);
+                        //backgroundWorker1.RunWorkerAsync(x.FullName);
+                    }
+
                 }
                 catch
                 {
-                    Console.Error.WriteLine("Error during unzip");
+                    lbx.Items.Add("Wrong file");
                 }
-                //System.IO.Directory.Delete(directoryName, true);
-                
-                FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
-                byte[] byteText = new byte[fs.Length];
-                fs.Read(byteText, 0, byteText.Length);
-                txtFile.Text = System.Text.Encoding.ASCII.GetString(byteText);
-                fs.Close();*/
+
 
             }
 
@@ -122,7 +125,7 @@ namespace EnvironmentInformation
         private void button2_Click_1(object sender, EventArgs e)
         {
             System.IO.StreamReader file =
-                new System.IO.StreamReader(Environment.CurrentDirectory + "\\words.txt");
+                new System.IO.StreamReader("E:\\words.txt");
             string line;
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
@@ -146,7 +149,7 @@ namespace EnvironmentInformation
         private void button3_Click(object sender, EventArgs e)
         {
             System.IO.StreamWriter file =
-                new System.IO.StreamWriter(Environment.CurrentDirectory + "\\words.txt");
+                new System.IO.StreamWriter("E:\\words.txt");
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             long xx = 0;
@@ -178,10 +181,84 @@ namespace EnvironmentInformation
 
         }
 
+        private void thread_DoWork(object fileNameO)
+        {
+            string fileName = (string)fileNameO;
+            smartReader reader = new smartReader(fileName);
+            string nxt;
+            while ((nxt = reader.nextChar()) != null)
+            {
+                words.analyzeString(nxt);
+            }
+        }
+
+
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             lbx.Items.Add("finished ");
+        }
+        class Translation
+        {
+            public string eng;
+            public string pol;
+            public Translation(string en,string pl)
+            {
+                eng = en;
+                pol = pl;
+            }
+
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            StreamWriter file = new StreamWriter("E:\\top100.json");
+            StreamReader poland = new StreamReader("E:\\polish.txt");
+            Dictionary<string, string> translation = new Dictionary<string, string>();
+            string eng, pol;
+            while ((eng=poland.ReadLine())!=null)
+            {
+                pol = poland.ReadLine();
+                translation[eng] = pol;
+            }
+            StreamReader wordsFile = new StreamReader("E:\\words.txt");
+            //list.Sort((x, y) => y.Item1.CompareTo(x.Item1));
+            List<Tuple<string, long>> result = new List<Tuple<string, long>>();
+            string lineWord, lineNum;
+            
+            while ((lineWord=wordsFile.ReadLine())!=null)
+            {
+                lineNum = wordsFile.ReadLine();
+                long key = Int64.Parse(lineNum);
+                result.Add(new Tuple<string, long>(lineWord, key));
+            }
+            result.Sort((x, y) => y.Item2.CompareTo(x.Item2));
+            //result.Reverse();
+            List<Translation> resultToJSON = new List<Translation>();
+            for (int i=0;i<100;i++)
+            {
+                resultToJSON.Add(new Translation(result[i].Item1, translation[result[i].Item1]));
+            }
+            file.WriteLine(JsonConvert.SerializeObject(resultToJSON));
+            file.Close();
+            lbx.Items.Add("top100 finished");
+            file = new StreamWriter("E:\\top1000.json");
+            for (int i = 10; i < 1000; i++)
+            {
+                resultToJSON.Add(new Translation(result[i].Item1, translation[result[i].Item1]));
+
+            }
+            file.WriteLine(JsonConvert.SerializeObject(resultToJSON));
+            file.Close();
+            lbx.Items.Add("top1000 finished");
+            file = new StreamWriter("E:\\top10000.json");
+            for (int i = 1000; i < 10000; i++)
+            {
+                resultToJSON.Add(new Translation(result[i].Item1, translation[result[i].Item1]));
+
+            }
+            file.WriteLine(JsonConvert.SerializeObject(resultToJSON));
+            file.Close();
+            lbx.Items.Add("top10000 finished");
         }
     }
 
