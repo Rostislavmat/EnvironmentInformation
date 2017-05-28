@@ -1,4 +1,4 @@
-﻿namespace EnvironmentInformation
+﻿namespace NewLangGeneration
 {
     partial class Form1
     {

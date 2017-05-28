@@ -17,7 +17,7 @@ using edu.stanford.nlp.pipeline;
 using Console = System.Console;
 using Newtonsoft.Json;
 
-namespace EnvironmentInformation
+namespace NewLangGeneration
 {
 
     public partial class Form1 : Form

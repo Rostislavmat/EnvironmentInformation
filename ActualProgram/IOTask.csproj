@@ -54,7 +54,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>EnvironmentInformation.Program</StartupObject>
+    <StartupObject>NewLangGeneration.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ejml-0.23, Version=0.23.0.0, Culture=neutral, processorArchitecture=MSIL">
