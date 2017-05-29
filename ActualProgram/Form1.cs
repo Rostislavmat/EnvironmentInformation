@@ -31,27 +31,6 @@ namespace NewLangGeneration
             InitializeComponent();
         }
 
-        private void btnGo_Click(object sender, EventArgs e)
-        {
-            OperatingSystem os = Environment.OSVersion;
-            PlatformID OSid = os.Platform;
-            string[] drives = Environment.GetLogicalDrives();
-            string drivesString = "";
-            foreach (string drive in drives)
-            {
-                drivesString += drive + ", ";
-            }
-            drivesString = drivesString.TrimEnd(' ', ',');
-            lbx.Items.Add("Machine Name: \t" + Environment.MachineName);
-            lbx.Items.Add("Operating System: \t" + Environment.OSVersion);
-            lbx.Items.Add("Operating System ID:\t" + OSid);
-            lbx.Items.Add("Current Folder: \t" + Environment.CurrentDirectory);
-            lbx.Items.Add("CLR Version: \t" + Environment.Version);
-            lbx.Items.Add("Present Drives: \t" + drivesString);
-            lbx.Items.Add("Program Files: \t" + Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
-
-        }
-
         private void btnExit_Click(object sender, EventArgs e)
         {
 
