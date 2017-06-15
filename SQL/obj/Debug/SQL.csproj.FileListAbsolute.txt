@@ -1,0 +1,6 @@
+E:\projects\IO_JNP\NewLangHelperWeb\NewLangGeneration\SQL\bin\Debug\SQL.exe.config
+E:\projects\IO_JNP\NewLangHelperWeb\NewLangGeneration\SQL\bin\Debug\SQL.exe
+E:\projects\IO_JNP\NewLangHelperWeb\NewLangGeneration\SQL\bin\Debug\SQL.pdb
+E:\projects\IO_JNP\NewLangHelperWeb\NewLangGeneration\SQL\obj\Debug\SQL.csprojResolveAssemblyReference.cache
+E:\projects\IO_JNP\NewLangHelperWeb\NewLangGeneration\SQL\obj\Debug\SQL.exe
+E:\projects\IO_JNP\NewLangHelperWeb\NewLangGeneration\SQL\obj\Debug\SQL.pdb
