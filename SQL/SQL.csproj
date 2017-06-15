@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BE9F1489-ED4E-40F5-B5F3-03FD85461E64}</ProjectGuid>
+    <ProjectGuid>{E925EA16-2706-47C6-8386-04E44C9D17A7}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>UpdateWords</RootNamespace>
-    <AssemblyName>UpdateWords</AssemblyName>
+    <RootNamespace>SQL</RootNamespace>
+    <AssemblyName>SQL</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace NewLangGeneration
 {
-    public class Trie
+    class Trie
     {
         private readonly Node _parentNode;
         

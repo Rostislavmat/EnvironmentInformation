@@ -1,75 +1,66 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace NewLangGeneration
 {
-    public class Utility
+    public class SmartReader
     {
-        public static bool isLetter(char x)
-        {
-            return (x <= 'z' && x >= 'a') || (x >= 'A' && x <= 'Z');
-        }
-    }
-    class smartReader
-    {
-        private char[] endOfString;
+        private readonly char[] _endOfString;
 
-        private System.IO.StreamReader file;
-        private int pointerToRead;
-        private int pointerToWrite;
-        const int max_len = 100;
-        private int credit;
-        private bool start;
+        private readonly System.IO.StreamReader _file;
+        private int _pointerToRead;
+        private int _pointerToWrite;
+        private const int MaxLen = 100;
+        private int _credit;
+        private bool _start;
 
-        public smartReader(string path)
+        public SmartReader(string path)
         {
-            file = new System.IO.StreamReader(path);
-            credit = 0;
-            pointerToRead = 0;
-            start = true;
-            pointerToWrite = 0;
-            endOfString = new char[max_len];
+            _file = new System.IO.StreamReader(path);
+            _credit = 0;
+            _pointerToRead = 0;
+            _start = true;
+            _pointerToWrite = 0;
+            _endOfString = new char[MaxLen];
         }
-        private void readForward()
+
+        private void ReadForward()
         {
-            while (credit<=22)
+            while (_credit<=22)
             {
                 char t;
-                try
+                if (!_file.EndOfStream)
                 {
-                    t = (char)(file.Read());
-                    if (Utility.isLetter(t))
+                    t = (char)_file.Read();
+                    if (char.IsLetter(t))
                     {
-                        t = Char.ToLower(t);
+                        t = char.ToLower(t);
                     }
                 }
-                catch (Exception e)
+                else
                 {
-                    t = (char)(0);
+                    t = (char)0;
                 }
-                endOfString[pointerToWrite] = t;
-                pointerToWrite++;
-                pointerToWrite %= max_len;
-                credit++;
+                _endOfString[_pointerToWrite] = t;
+                _pointerToWrite++;
+                _pointerToWrite %= MaxLen;
+                _credit++;
             }
         }
-        public string nextChar()
+
+        public string NextChar()
         {
-            if (credit == 0)
+            if (_credit == 0)
             {
                 char t;
-                if ((t = (char)(file.Read())) != -1)
+                if ((t = (char)_file.Read()) != -1)
                 {
-                    if (Utility.isLetter(t))
+                    if (char.IsLetter(t))
                     {
-                        t = Char.ToLower(t);
+                        t = char.ToLower(t);
                     }
-                    endOfString[pointerToWrite] = t;
-                    pointerToWrite++;
-                    pointerToWrite %= max_len;
+                    _endOfString[_pointerToWrite] = t;
+                    _pointerToWrite++;
+                    _pointerToWrite %= MaxLen;
                 }
                 else
                 {
@@ -79,35 +70,36 @@ namespace NewLangGeneration
             }
             else
             {
-                credit--;
+                _credit--;
             }
            
-            char currentStart = endOfString[pointerToRead];
-            if (currentStart == (char)65535)
+            char currentStart = _endOfString[_pointerToRead];
+            if (currentStart == (char)65535 || currentStart == (char)0)
             {
                 return null;
             }
-            pointerToRead++;
-            pointerToRead %= max_len;
-            if (!Utility.isLetter(currentStart) || start)
+            _pointerToRead++;
+            _pointerToRead %= MaxLen;
+            if (!char.IsLetter(currentStart) || _start)
             {
                 
-                readForward();
-                List<char> wordToReturn = new List<char>();
-                int i = pointerToRead;
-                if (start)
+                ReadForward();
+                var wordToReturn = new List<char>();
+                int i = _pointerToRead;
+                if (_start)
                     i--;
-                start = false;
+                _start = false;
                 while (wordToReturn.Count != 20)
                 {
-                    wordToReturn.Add(endOfString[i]);
+                    wordToReturn.Add(_endOfString[i]);
                     i++;
-                    i %= max_len;
+                    i %= MaxLen;
                 }
                 return string.Join("", wordToReturn.ToArray());
             }
             return "";
         }
 
+        public void Close() => _file.Close();
     }
 }
